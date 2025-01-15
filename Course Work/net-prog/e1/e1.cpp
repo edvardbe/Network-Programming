@@ -2,16 +2,15 @@
 #include <stdexcept>
 #include <thread>
 #include <mutex>
-#include <climits>
 #include <vector>
-#include <cmath>
+#include <chrono>
 
 using namespace std;
+using namespace chrono;
 
-class Prime{
-public:
+mutex primes_mutex;
 
-    static bool is_prime(long long num) {
+static bool is_prime(long long num) {
     if (num <= 1) return false;
     if (num <= 3) return true;
     if (num % 2 == 0 || num % 3 == 0) return false;
@@ -19,49 +18,133 @@ public:
         if (num % i == 0 || num % (i + 2) == 0) return false;
     }
     return true;
-    }
+}
 
-    static int find_prime(int start, int end, vector<int>& primes){
-        if (start < 0) throw invalid_argument("Start-value needs to be larger than or equal to 0");
-        cout << "start: " << start << endl;
-        cout << "end: " << end << endl;
-        while (start < 3){
-            bool prime = is_prime(start);
-            if(prime) primes.push_back(start);
-            start++;
-        }
-        for(int i = start; i < end; i = i + 2){
-            bool prime = is_prime(i);
-            if(prime) primes.push_back(i);
-        }
-        return 0;
-    }
-};
-
-int main(){
-    vector<thread> threads;
-    const int num_threads = 4;
-    const int start_range = 0;
-    const int end_range = 100;
-    vector<int> primes;
+static int find_prime(int start, int end, vector<vector<int>>& primes, int id){
+    if (start < 0) throw invalid_argument("Start-value needs to be larger than or equal to 0");
     
-    int range_per_thread = (end_range - start_range) / num_threads;
+    vector<int> local_primes;
 
-    cout << "Range per thread: " << range_per_thread << endl;
+    // Ensure start is odd (since all even numbers are not prime)
+    if (!(start & 1)) start++;
 
+    for (int i = start; i <= end; i += (i < 3) ? 1 : 2) { // If i is less than 3 increment by 1, else increment by 2
+        if (is_prime(i)) {
+            local_primes.push_back(i);
+        }
+    }
+    lock_guard<mutex> lock(primes_mutex);
+    primes[id] = local_primes;
+    return 0;
+}
+
+void print_concur_primes(vector<vector<int>>& primes, int num_threads, int start_range, int end_range){
+
+    int total_range = end_range - start_range;
+    int range_per_thread = total_range / num_threads;
+    int remainder =  total_range % num_threads;
+    
     for (int i = 0; i < num_threads; i++){
-        int start = i * range_per_thread;
-        int end = range_per_thread * (i + 1);
+        int start = start_range + i * range_per_thread;
+        int end = (i == num_threads - 1) ? start + range_per_thread + remainder : start + range_per_thread - 1;
+
+        vector<int> local_primes = primes[i];
+        cout << "[";
+        for (int j = 0; j < local_primes.size(); j++){
+            int prime = local_primes[j];
+            cout << prime;
+            if(j < local_primes.size() - 1){
+                cout << ", ";
+            }
+        }
+        cout << "], in range: [" << start << ", " << end << "]" << endl;
+    }
+    
+
+}
+
+void print_seq_primes(vector<int>& primes_seq){
+    cout << "[";
+    for(int i = 0; i < primes_seq.size(); i++){
+        cout << primes_seq[i];
+        if(i < primes_seq.size() - 1){
+            cout << ", ";
+        } 
+    }
+    cout << "]\n" << endl;
+}
+
+int run_concurrent(int num_threads, int start_range, int end_range, vector<vector<int>>& primes){
+    vector<thread> threads;
+    
+    int total_range = end_range - start_range;
+    int range_per_thread = total_range / num_threads;
+    int remainder =  total_range % num_threads;
+    for (int i = 0; i < num_threads; i++){
+        int start = start_range + i * range_per_thread;
+        int end = (i == num_threads - 1) ? start + range_per_thread + remainder : start + range_per_thread - 1;
         try{
-            Prime::find_prime(start, end, primes);
+            threads.emplace_back(find_prime, start, end, ref(primes), i);
         } catch(invalid_argument& e){
             cerr << e.what() << endl;
             return 1;
         }
-    } 
-
-    for(int i : primes){
-        cout << "prime: " << i << endl;
     }
 
+    for (auto& thread : threads){
+        thread.join();
+    }
+    return 0;
+}
+
+int run_sequential(int start_range, int end_range, vector<int>& primes_seq){
+    for (int i = start_range; i <= end_range; i++){
+        if(is_prime(i)) {
+            primes_seq.push_back(i);
+        }
+    }
+    return 0;
+}
+
+int main(){
+    const int num_threads = 4;
+    const int start_range = 1;
+    const int end_range = 100;
+
+    vector<vector<int>> primes(num_threads);
+
+    vector<int> primes_seq;
+
+    auto beg = chrono::high_resolution_clock::now();    
+    
+    run_concurrent(num_threads, start_range, end_range, ref(primes));
+
+    auto end = high_resolution_clock::now();
+
+    auto duration = duration_cast<microseconds>(end - beg);
+
+    cout << "Time taken to find primes in range, [" << start_range << ", " << end_range << "], concurrently: \n" << duration.count() << " microseconds\n" << endl;
+
+    //print_concur_primes(primes, num_threads, start_range, end_range);
+
+    int num_primes = 0;
+    for (auto vec : primes){
+        num_primes += vec.size();
+    }
+    cout << "Number of primes (concurrent): " << num_primes << endl << endl;
+    
+    beg = high_resolution_clock::now();
+    
+    run_sequential(start_range, end_range, ref(primes_seq));
+    
+    end = high_resolution_clock::now();
+
+
+    duration = duration_cast<microseconds>(end - beg);
+    cout << "Time taken to find primes in range, [" << start_range << ", " << end_range << "], sequentially: \n" << duration.count() << " microseconds\n" << endl; 
+
+    //print_seq_primes(primes_seq);
+
+    num_primes = primes_seq.size();
+    cout << "Number of primes (sequential): " << num_primes << endl << endl;
 }
