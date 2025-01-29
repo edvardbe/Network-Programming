@@ -5,6 +5,7 @@
 #include <vector>
 #include <chrono>
 #include <atomic>
+#include <cmath>
 
 using namespace std;
 using namespace chrono;
@@ -51,7 +52,7 @@ void print_concur_primes(vector<vector<int>>& primes, int num_threads, int start
         int end = (i == num_threads - 1) ? start + range_per_thread + remainder : start + range_per_thread - 1;
 
         vector<int> local_primes = primes[i];
-        cout << "Primes: [";
+        cout << "[";
         for (int j = 0; j < local_primes.size(); j++){
             int prime = local_primes[j];
             cout << prime;
@@ -59,7 +60,7 @@ void print_concur_primes(vector<vector<int>>& primes, int num_threads, int start
                 cout << ", ";
             }
         }
-        cout << "], in range: (" << start << " - " << end << ")" << endl;
+        cout << "], in range: [" << start << ", " << end << "]" << endl;
     }
     
 
@@ -76,22 +77,37 @@ void print_seq_primes(vector<int>& primes_seq){
     cout << "]\n" << endl;
 }
 
-int run_concurrent(int num_threads, int start_range, int end_range, vector<vector<int>>& primes){
-    vector<thread> threads;
 
-    int total_range = end_range - start_range;
-    int range_per_thread = total_range / num_threads;
-    int remainder =  total_range % num_threads;
-    for (int i = 0; i < num_threads; i++){
-        int start = start_range + i * range_per_thread;
-        int end = (i == num_threads - 1) ? start + range_per_thread + remainder : start + range_per_thread - 1;
-        try{
-            threads.emplace_back(find_prime, start, end, ref(primes), i);
-        } catch(invalid_argument& e){
-            cerr << e.what() << endl;
-            return 1;
+static void find_prime_chunks(int start_range, int end_range, int chunk_size, atomic<int>& next_start, vector<vector<int>>& primes, int id) {
+    vector<int> local_primes;
+
+    while (true) {
+        int start = next_start.fetch_add(chunk_size);
+        if (start > end_range) break;
+        int end = min(start + chunk_size - 1, end_range);
+
+        // Ensure start is odd (since all even numbers are not prime)
+        if (start % 2 == 0) start++;
+
+        for (int i = start; i <= end; i += (i < 3) ? 1 : 2) { // Increment by 1 for small numbers, else by 2
+            if (is_prime(i)) {
+                local_primes.push_back(i);
+            }
         }
     }
+
+    lock_guard<mutex> lock(primes_mutex);
+    primes[id] = local_primes;
+}
+
+int run_concurrent(int num_threads, int start_range, int end_range, int chunk_size, vector<vector<int>>& primes){
+    vector<thread> threads;
+    atomic<int> next_start(start_range);
+    
+    for (int i = 0; i < num_threads; i++) {
+        threads.emplace_back(find_prime_chunks, start_range, end_range, chunk_size, ref(next_start), ref(primes), i);
+    }
+    
 
     for (auto& thread : threads){
         thread.join();
@@ -110,11 +126,11 @@ int run_sequential(int start_range, int end_range, vector<int>& primes_seq){
 }
 
 int main(){
-    
     const int start_range = 0;
-    const int end_range = 1e2;
+    const int end_range = 1e3;
     const int total_range = end_range - start_range;
-    const int num_threads = 13;//(total_range > 1000) ? 40 : (end_range / 10) + 1;
+    const int num_threads = (total_range > 1000) ? 100 : (end_range / 10) + 1;
+    const int chunk_size = (total_range) / (num_threads * (sqrt(5.0) - 1.0) / 2.0);
 
     vector<vector<int>> primes(num_threads);
 
@@ -122,7 +138,7 @@ int main(){
 
     auto beg = chrono::high_resolution_clock::now();    
     
-    run_concurrent(num_threads, start_range, end_range, ref(primes));
+    run_concurrent(num_threads, start_range, end_range, chunk_size, ref(primes));
 
     auto end = high_resolution_clock::now();
 
