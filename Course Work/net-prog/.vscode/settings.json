@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "*.py": "python",
+        "vector": "cpp",
+        "iostream": "cpp",
+        "mutex": "cpp",
+        "thread": "cpp"
+    }
+}
