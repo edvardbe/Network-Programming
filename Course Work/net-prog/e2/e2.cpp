@@ -9,19 +9,21 @@
 #include <chrono>
 #include <future>
 #include <memory>
+#include <list>
 
 using namespace std;
 
 class Workers {
-    public:
         vector<thread> threads;
         int num_threads;
-        queue<function<void()>> tasks;
+        list<function<void()>> tasks;
         mutex mutex_t;
         condition_variable condition;
         bool started = false;
         atomic<bool> stop;
 
+    public:
+        
         Workers(int num_threads) {
             // Create num_threads threads
             this->num_threads = num_threads;
@@ -37,8 +39,8 @@ class Workers {
                         unique_lock<mutex> lock(mutex_t);
                         condition.wait(lock, [this] { return stop || !tasks.empty(); });
                         if (stop && tasks.empty()) return;
-                        auto task = move(tasks.front());
-                        tasks.pop();
+                        auto task = *tasks.begin();
+                        tasks.pop_front();
                         lock.unlock();
                         task();
                     }
@@ -49,16 +51,34 @@ class Workers {
             // Post a task to the threads
             {
                 unique_lock<mutex> lock(mutex_t);
-                tasks.push(task);
+                tasks.emplace_back(task);
             }
             condition.notify_one();
         }
 
-        void join() {
+        void post_timeout(function<void()> task, int time){
+            // Post a task to the threads after some time
+            
             {
                 unique_lock<mutex> lock(mutex_t);
-                stop = true;
+                tasks.emplace_back([time, task] {
+                        this_thread::sleep_for(chrono::milliseconds(time));
+                        task();
+                        });
             }
+            condition.notify_one();
+
+        }
+
+        void stop_workers() {
+            
+            unique_lock<mutex> lock(mutex_t);
+            stop = true;
+    
+        }
+
+        void join() {
+            stop_workers();
             // Join the threads
             condition.notify_all();
             for (auto& thread : threads) {
@@ -91,7 +111,7 @@ int main(){
     event_loop.post([] {
     // Task B
     // Might run in parallel with task A and B
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 4; i++) {
             cout << "Task B: " << i << endl;
         }
     });
@@ -101,10 +121,38 @@ int main(){
     // Will run after task C
     // Might run in parallel with task A and B
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 4; i++) {
             cout << "Task C: " << i << endl;
         }
     });
+
+    worker_threads.post_timeout([] {
+            auto now = chrono::system_clock::now();
+            const time_t t_c = std::chrono::system_clock::to_time_t(now);
+            cout << "Timed out task worker 1 at: " << ctime(&t_c) << ", 5000ms" << endl;
+            }, 5000);
+   
+
+     worker_threads.post_timeout([] {
+            auto now = chrono::system_clock::now();
+            const time_t t_c = std::chrono::system_clock::to_time_t(now);
+            cout << "Timed out task worker 2 at: " << ctime(&t_c) << ",  1000ms" << endl;
+            }, 1000);
+
+    event_loop.post_timeout([] {
+        auto now = chrono::system_clock::now();
+        const time_t t_c = std::chrono::system_clock::to_time_t(now);
+        cout << "Timed out task event_loop 1 at: " << ctime(&t_c) << ", 5000ms" << endl;
+        }, 5000);
+       
+    
+    event_loop.post_timeout([] {
+        auto now = chrono::system_clock::now();
+        const time_t t_c = std::chrono::system_clock::to_time_t(now);
+        cout << "Timed out task event_loop 2 at: " << ctime(&t_c) << ",  1000ms" << endl;
+        }, 1000);
+
+
 
     worker_threads.join(); // Calls join () on the worker threads
     event_loop.join(); // Calls join () on the event thread
