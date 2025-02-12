@@ -1,0 +1,3 @@
+"C:\Program Files\CMake\bin\cmake.exe" -E rm -f CMakeFiles\callbacks.dir/objects.a
+C:\msys64\ucrt64\bin\ar.exe qc CMakeFiles\callbacks.dir/objects.a @CMakeFiles\callbacks.dir\objects1.rsp
+C:\msys64\ucrt64\bin\g++.exe  -std=c++20 -pthread -Wall -Wextra -g -Wl,--whole-archive CMakeFiles\callbacks.dir/objects.a -Wl,--no-whole-archive -o callbacks.exe -Wl,--out-implib,libcallbacks.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\callbacks.dir\linkLibs.rsp

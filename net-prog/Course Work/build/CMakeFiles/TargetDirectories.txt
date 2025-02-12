@@ -1,0 +1,4 @@
+C:/Users/Edvard/Documents/BIDATA/V2025 Semester/Network-Programming/Course Work/net-prog/build/CMakeFiles/callbacks.dir
+C:/Users/Edvard/Documents/BIDATA/V2025 Semester/Network-Programming/Course Work/net-prog/build/CMakeFiles/await.dir
+C:/Users/Edvard/Documents/BIDATA/V2025 Semester/Network-Programming/Course Work/net-prog/build/CMakeFiles/edit_cache.dir
+C:/Users/Edvard/Documents/BIDATA/V2025 Semester/Network-Programming/Course Work/net-prog/build/CMakeFiles/rebuild_cache.dir
