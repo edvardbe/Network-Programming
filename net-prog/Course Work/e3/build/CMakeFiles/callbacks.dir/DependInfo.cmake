@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/Users/edvardeek/Documents/University/V2025 Semester/Network Programming/net-prog/Course Work/e3/callbacks.cpp" "CMakeFiles/callbacks.dir/callbacks.cpp.o" "gcc" "CMakeFiles/callbacks.dir/callbacks.cpp.o.d"
+  "C:/Users/Edvard/Documents/BIDATA/V2025 Semester/Network-Programming/net-prog/Course Work/e3/callbacks.cpp" "CMakeFiles/callbacks.dir/callbacks.cpp.obj" "gcc" "CMakeFiles/callbacks.dir/callbacks.cpp.obj.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

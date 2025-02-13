@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/Users/edvardeek/Documents/University/V2025 Semester/Network Programming/net-prog/Course Work/e3/await.cpp" "CMakeFiles/await.dir/await.cpp.o" "gcc" "CMakeFiles/await.dir/await.cpp.o.d"
+  "C:/Users/Edvard/Documents/BIDATA/V2025 Semester/Network-Programming/net-prog/Course Work/e3/await.cpp" "CMakeFiles/await.dir/await.cpp.obj" "gcc" "CMakeFiles/await.dir/await.cpp.obj.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

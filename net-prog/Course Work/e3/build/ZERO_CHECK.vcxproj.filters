@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Edvard\Documents\BIDATA\V2025 Semester\Network-Programming\net-prog\Course Work\e3\build\CMakeFiles\5dbefe7ce1480679604e085fcfbb1a54\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{A0FC8A2F-5976-322B-A523-45189326E332}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
