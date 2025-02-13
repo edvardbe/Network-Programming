@@ -8,6 +8,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20 -Wall -Wextra")
 # For Apple (macOS)
 if(APPLE)
   include_directories(/usr/local/include /opt/homebrew/include)
+  add_executable(callbacks callbacks.cpp)
+  add_executable(await await.cpp)
 endif()
 
 # For Windows (both 32-bit and 64-bit)
@@ -38,12 +40,14 @@ if(WIN32)
   
     # Exclude the pthread flag for Windows
     string(REPLACE "-pthread" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+    add_executable(callbacks callbacks.cpp)
+    add_executable(await await.cpp)
+    target_link_libraries(await ws2_32 mswsock)
+    target_link_libraries(callbacks ws2_32 mswsock)
 endif()
 
 # Add executables
-add_executable(callbacks callbacks.cpp)
-add_executable(await await.cpp)
+
 
 # Link with ws2_32 and mswsock
-target_link_libraries(await ws2_32 mswsock)
-target_link_libraries(callbacks ws2_32 mswsock)
+
