@@ -1,0 +1,3 @@
+"C:\Program Files\CMake\bin\cmake.exe" -E rm -f CMakeFiles\webserver.dir/objects.a
+C:\msys64\mingw64\bin\ar.exe qc CMakeFiles\webserver.dir/objects.a @CMakeFiles\webserver.dir\objects1.rsp
+C:\msys64\mingw64\bin\c++.exe  -std=c++20 -Wall -Wextra -Wl,--whole-archive CMakeFiles\webserver.dir/objects.a -Wl,--no-whole-archive -o webserver.exe -Wl,--out-implib,libwebserver.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\webserver.dir\linkLibs.rsp

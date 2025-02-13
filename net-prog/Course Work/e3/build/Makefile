@@ -141,6 +141,19 @@ await/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\await.dir\build.make CMakeFiles/await.dir/build
 .PHONY : await/fast
 
+#=============================================================================
+# Target rules for targets named webserver
+
+# Build rule for target.
+webserver: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 webserver
+.PHONY : webserver
+
+# fast build rule for target.
+webserver/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\webserver.dir\build.make CMakeFiles/webserver.dir/build
+.PHONY : webserver/fast
+
 await.obj: await.cpp.obj
 .PHONY : await.obj
 
@@ -189,6 +202,30 @@ callbacks.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\callbacks.dir\build.make CMakeFiles/callbacks.dir/callbacks.cpp.s
 .PHONY : callbacks.cpp.s
 
+webserver.obj: webserver.cpp.obj
+.PHONY : webserver.obj
+
+# target to build an object file
+webserver.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\webserver.dir\build.make CMakeFiles/webserver.dir/webserver.cpp.obj
+.PHONY : webserver.cpp.obj
+
+webserver.i: webserver.cpp.i
+.PHONY : webserver.i
+
+# target to preprocess a source file
+webserver.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\webserver.dir\build.make CMakeFiles/webserver.dir/webserver.cpp.i
+.PHONY : webserver.cpp.i
+
+webserver.s: webserver.cpp.s
+.PHONY : webserver.s
+
+# target to generate assembly for a file
+webserver.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\webserver.dir\build.make CMakeFiles/webserver.dir/webserver.cpp.s
+.PHONY : webserver.cpp.s
+
 # Help Target
 help:
 	@echo The following are some of the valid targets for this Makefile:
@@ -199,12 +236,16 @@ help:
 	@echo ... rebuild_cache
 	@echo ... await
 	@echo ... callbacks
+	@echo ... webserver
 	@echo ... await.obj
 	@echo ... await.i
 	@echo ... await.s
 	@echo ... callbacks.obj
 	@echo ... callbacks.i
 	@echo ... callbacks.s
+	@echo ... webserver.obj
+	@echo ... webserver.i
+	@echo ... webserver.s
 .PHONY : help
 
 
