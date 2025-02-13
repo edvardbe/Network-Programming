@@ -1,0 +1,4 @@
+/Users/edvardeek/Documents/University/V2025 Semester/Network Programming/net-prog/Course Work/e4/build/CMakeFiles/udp.dir
+/Users/edvardeek/Documents/University/V2025 Semester/Network Programming/net-prog/Course Work/e4/build/CMakeFiles/tls.dir
+/Users/edvardeek/Documents/University/V2025 Semester/Network Programming/net-prog/Course Work/e4/build/CMakeFiles/edit_cache.dir
+/Users/edvardeek/Documents/University/V2025 Semester/Network Programming/net-prog/Course Work/e4/build/CMakeFiles/rebuild_cache.dir
