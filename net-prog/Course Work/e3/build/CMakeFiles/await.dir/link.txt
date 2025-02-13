@@ -1,0 +1,1 @@
+/opt/homebrew/bin/aarch64-apple-darwin24-g++-14  -std=c++20 -pthread -Wall -Wextra -g -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/opt/homebrew/opt/openssl@3/lib CMakeFiles/await.dir/await.cpp.o -o await

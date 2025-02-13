@@ -1,4 +1,0 @@
-C:/Users/Edvard/Documents/BIDATA/V2025 Semester/Network-Programming/Course Work/net-prog/e3/CMakeFiles/callbacks.dir
-C:/Users/Edvard/Documents/BIDATA/V2025 Semester/Network-Programming/Course Work/net-prog/e3/CMakeFiles/await.dir
-C:/Users/Edvard/Documents/BIDATA/V2025 Semester/Network-Programming/Course Work/net-prog/e3/CMakeFiles/ALL_BUILD.dir
-C:/Users/Edvard/Documents/BIDATA/V2025 Semester/Network-Programming/Course Work/net-prog/e3/CMakeFiles/ZERO_CHECK.dir
