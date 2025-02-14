@@ -1,3 +1,1 @@
-"C:\Program Files\CMake\bin\cmake.exe" -E rm -f CMakeFiles\callbacks.dir/objects.a
-C:\msys64\mingw64\bin\ar.exe qc CMakeFiles\callbacks.dir/objects.a @CMakeFiles\callbacks.dir\objects1.rsp
-C:\msys64\mingw64\bin\c++.exe  -std=c++20 -Wall -Wextra -Wl,--whole-archive CMakeFiles\callbacks.dir/objects.a -Wl,--no-whole-archive -o callbacks.exe -Wl,--out-implib,libcallbacks.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\callbacks.dir\linkLibs.rsp
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -std=c++20 -Wall -Wextra -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/opt/homebrew/opt/openssl@3/lib CMakeFiles/callbacks.dir/callbacks.cpp.o -o callbacks

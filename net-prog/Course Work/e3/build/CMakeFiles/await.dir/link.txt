@@ -1,3 +1,1 @@
-"C:\Program Files\CMake\bin\cmake.exe" -E rm -f CMakeFiles\await.dir/objects.a
-C:\msys64\mingw64\bin\ar.exe qc CMakeFiles\await.dir/objects.a @CMakeFiles\await.dir\objects1.rsp
-C:\msys64\mingw64\bin\c++.exe  -std=c++20 -Wall -Wextra -Wl,--whole-archive CMakeFiles\await.dir/objects.a -Wl,--no-whole-archive -o await.exe -Wl,--out-implib,libawait.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\await.dir\linkLibs.rsp
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  -std=c++20 -Wall -Wextra -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/opt/homebrew/opt/openssl@3/lib CMakeFiles/await.dir/await.cpp.o -o await

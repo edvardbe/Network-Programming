@@ -21,8 +21,40 @@ class EchoServer {
         // Connection is closed when socket is destroyed
         co_return;
       }
-      bytes_transferred = co_await asio::async_write(socket, asio::buffer(buffer), asio::use_awaitable);
-      cout << "Server: sent: " << message << endl;
+      if (message.substr(0, 4) == "GET ") {
+        string request_path = message.substr(4, message.find(" ", 4) - 4);
+        cout << "Request path: " << request_path << endl;
+
+        // Handle the different GET requests
+        if (request_path == "/") {
+          message = "<h1>Welcome to the Echo Server!</h1>";
+        } else if (request_path == "/page1") {
+          message = "<html><body><h1>Page 1</h1><p>This is page 1</p></body></html>";
+        } else if (request_path == "/page2") {
+          message = "<html><body><h1>Page 2</h1><p>This is page 2</p></body></html>";
+        } else {
+          message = "404 Not Found: Page not found";
+        }
+      }  
+
+      string response = "HTTP/1.1 200 OK\r\n";
+      response += "Content-Length: " + to_string(message.length()) + "\r\n";
+      response += "Content-Type: text/html; charset=UTF-8\r\n";
+      response += "\r\n";
+      response += message + "\r\n";
+
+      
+
+      auto write_buffer = make_shared<std::string>(response);
+      asio::async_write(socket, asio::buffer(*write_buffer), [write_buffer](const error_code &ec, size_t bytes_transferred) {
+      if (!ec) {
+        cout << "Server: sent: " << write_buffer->substr(0, bytes_transferred) << endl;
+        // Handle new request
+      }
+      
+    });
+    /* bytes_transferred = co_await asio::async_write(socket, asio::buffer(message), asio::use_awaitable);
+      cout << "Server: sent: " << message << endl; */
     }
   }
 
@@ -33,8 +65,8 @@ public:
 
     cout << "Server: waiting for connection" << endl;
     asio::ssl::context ssl_context(asio::ssl::context::tlsv13_server);
-    ssl_context.use_certificate_chain_file("server.crt");
-    ssl_context.use_private_key_file("server.key", asio::ssl::context::pem);
+    ssl_context.use_certificate_chain_file("cert.crt");
+    ssl_context.use_private_key_file("cert.key", asio::ssl::context::pem);
     for (;;) {
       asio::ssl::stream<asio::ip::tcp::socket> socket(co_await acceptor.async_accept(asio::use_awaitable), ssl_context);
       cout << "Server: connection from " << socket.lowest_layer().remote_endpoint().address() << ':' << socket.lowest_layer().remote_endpoint().port() << endl;
@@ -71,7 +103,6 @@ public:
     message = buffer.substr(0, bytes_transferred - 2); // Strip \r\n at end of buffer
     cout << "Client: received: " << message << endl;
 
-    message = "exit";
     bytes_transferred = co_await asio::async_write(socket, asio::buffer(message + "\r\n"), asio::use_awaitable);
     cout << "Client: sent: " << message << endl;
   }

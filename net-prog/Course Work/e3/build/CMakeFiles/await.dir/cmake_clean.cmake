@@ -1,10 +1,8 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/await.dir/await.cpp.obj"
-  "CMakeFiles/await.dir/await.cpp.obj.d"
-  "await.exe"
-  "await.exe.manifest"
+  "CMakeFiles/await.dir/await.cpp.o"
+  "CMakeFiles/await.dir/await.cpp.o.d"
+  "await"
   "await.pdb"
-  "libawait.dll.a"
 )
 
 # Per-language clean rules from dependency scanning.
