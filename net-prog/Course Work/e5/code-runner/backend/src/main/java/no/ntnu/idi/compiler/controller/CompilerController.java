@@ -28,7 +28,7 @@ public class CompilerController {
         try {
             logger.info("Received request: {}", request.getSourceCode());
 
-            double result = compilerService.compile(request.getSourceCode());
+            String result = compilerService.compile(request.getSourceCode());
 
             logger.info("Returning result: {}", result);
             resultMap = Map.of("result", result);

@@ -1,10 +1,10 @@
-package no.ntnu.idi.calculator;
+package no.ntnu.idi.compiler;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class CalculatorApplicationTests {
+class CompilerApplicationTests {
 
 	@Test
 	void contextLoads() {

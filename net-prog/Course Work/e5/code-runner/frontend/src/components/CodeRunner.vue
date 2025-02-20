@@ -15,8 +15,8 @@ async function runCompilation() {
         <textarea id="code-area" v-model="sourceCode" placeholder="Skriv inn kode"></textarea>
         <button @click="runCompilation">Kjør</button>
 
-        <p v-if="store.result">Resultat: {{ store.result }}</p>
-        <p v-if="store.error" style="color: red;">Feil: {{ store.error }}</p>
+        <p v-if="store.result" v-html="store.result.replace(/\n/g, '<br>')"></p>
+        <p v-if="store.error" style="color: red;" v-html="store.error.replace(/\n/g, '<br>')"></p>
     </div>
 </template>
 

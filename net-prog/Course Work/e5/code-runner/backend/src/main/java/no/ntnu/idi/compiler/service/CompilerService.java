@@ -1,27 +1,50 @@
 package no.ntnu.idi.compiler.service;
 
+
 import org.springframework.stereotype.Service;
-
-
-import net.objecthunter.exp4j.Expression;
-import net.objecthunter.exp4j.ExpressionBuilder;
+import java.io.*;
+import java.nio.file.*;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class CompilerService {
 
-    public double compile(String expression) {
-        String[] fracs = expression.split("/");
-        int nFracs = fracs.length;
+    //private static final String WORK_DIR = "/tmp/docker_compiler"; // Midlertidig mappe
+    private static final String WORK_DIR = System.getProperty("java.io.tmpdir") + "/docker_compiler";
+    // Windows-sti
 
-        for (int i = 1; i < nFracs; i++) {
-            System.out.println(fracs[i]);
-            Expression frac = new ExpressionBuilder(fracs[i]).build();
-            
-            double num = frac.evaluate();
-            if (num == 0) throw new ArithmeticException("Divide by zero");
-        }
-        Expression e = new ExpressionBuilder(expression).build();
-        return e.evaluate();
+    public String compile(String sourceCode) throws IOException, InterruptedException {
+    Files.createDirectories(Paths.get(WORK_DIR));
+
+    String filename = "program.py";
+    Path filePath = Paths.get(WORK_DIR, filename);
+    System.out.println("Fil lagres her: " + filePath.toAbsolutePath()); // Console-log
+    Files.writeString(filePath, sourceCode);
+
+    boolean isWindows = System.getProperty("os.name").toLowerCase().contains("win");
+
+    // Kjør Docker direkte, uten sh
+    String dockerCommand = String.format(
+        "docker run --rm -v %s:/app -w /app my-python-app python %s",
+        WORK_DIR, filename
+    );
+
+    ProcessBuilder builder = isWindows
+        ? new ProcessBuilder("cmd.exe", "/c", dockerCommand)  // Windows
+        : new ProcessBuilder("bash", "-c", dockerCommand);   // Linux/macOS
+
+    builder.redirectErrorStream(true);
+    Process process = builder.start();
+
+    String output = new String(process.getInputStream().readAllBytes());
+
+    if (!process.waitFor(5, TimeUnit.SECONDS)) {
+        process.destroy();
+        throw new RuntimeException("Timeout: Programmet brukte for lang tid");
     }
 
+    return output;
+    }
+
+    
 }
