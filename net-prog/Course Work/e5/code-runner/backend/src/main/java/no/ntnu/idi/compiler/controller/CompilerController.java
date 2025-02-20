@@ -10,7 +10,7 @@ import no.ntnu.idi.compiler.service.CompilerService;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/compiler")
+@RequestMapping("/api/compile")
 @CrossOrigin(origins = "http://localhost:5173") // Viktig for Vue frontend
 public class CompilerController {
 

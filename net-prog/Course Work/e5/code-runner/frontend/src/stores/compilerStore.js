@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import axios from 'axios';
 
 export const useCompilerStore = defineStore('compiler', {
     state: () => ({
@@ -8,23 +9,21 @@ export const useCompilerStore = defineStore('compiler', {
     actions: {
         async compileCode(sourceCode) {
             try {
-                const response = await fetch("http://localhost:8080/compile", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ sourceCode }),
+                const response = await axios.post("http://localhost:8080/api/compile", {
+                    sourceCode: sourceCode
                 });
 
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.error || "Ukjent feil");
-                }
-
-                this.result = data.result;
+                this.result = response.data.result;
                 this.error = null;
             } catch (error) {
                 this.result = null;
-                this.error = error.message;
+
+                // Sjekk om feilen kommer fra serveren
+                if (error.response) {
+                    this.error = error.response.data.error || "Ukjent serverfeil";
+                } else {
+                    this.error = "Kunne ikke koble til serveren";
+                }
             }
         }
     }
