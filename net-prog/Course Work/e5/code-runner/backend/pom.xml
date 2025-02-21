@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>no.ntnu.idi</groupId>
-	<artifactId>calculator</artifactId>
+	<artifactId>compilor</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>calculator</name>
+	<name>compilor</name>
 	<description>Spring boot for Calculator project</description>
 	<url/>
 	<licenses>

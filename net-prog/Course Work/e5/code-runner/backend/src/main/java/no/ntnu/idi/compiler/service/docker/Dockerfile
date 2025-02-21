@@ -1,4 +1,4 @@
-FROM python:3
+FROM python:latest
 
 # Sett arbeidskatalog
 WORKDIR /app
@@ -7,4 +7,4 @@ WORKDIR /app
 COPY . /app
 
 # Eventuelt installer nødvendige avhengigheter
-#RUN pip install -r requirements.txt
+RUN pip install -r requirements.txt

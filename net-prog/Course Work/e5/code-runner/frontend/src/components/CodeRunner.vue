@@ -2,17 +2,28 @@
 import { ref } from "vue";
 import { useCompilerStore } from "@/stores/compilerStore"; // Sjekk at import-stien stemmer!
 
+
 const store = useCompilerStore();
-const sourceCode = ref("");
+/* const sourceCode = ref("");
+const language = ref(""); */
 
 async function runCompilation() {
-    await store.compileCode(sourceCode.value);
+    await store.compileCode();
 }
 </script>
 
 <template id="container">
     <div>
-        <textarea id="code-area" v-model="sourceCode" placeholder="Skriv inn kode"></textarea>
+      <label for="language">Choose a language:</label>
+      <select name="language" id="language" v-model="store.language">
+        <option value="python">Python</option>
+        <option value="c">C</option>
+        <option value="java">Java</option>
+      </select>
+<!--       <Dropdown v-model="language" editable :options="languages" optionLabel="name" placeholder="Select a programming language" class="w-full md:w-14rem" />
+ -->
+
+        <textarea id="code-area" v-model="store.sourceCode" placeholder="Skriv inn kode"></textarea>
         <button @click="runCompilation">Kjør</button>
 
         <p v-if="store.result" v-html="store.result.replace(/\n/g, '<br>')"></p>

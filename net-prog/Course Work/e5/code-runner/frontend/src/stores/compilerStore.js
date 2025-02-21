@@ -3,14 +3,18 @@ import axios from 'axios';
 
 export const useCompilerStore = defineStore('compiler', {
     state: () => ({
+        sourceCode: null,
+        language: null,
         result: null,
         error: null
     }),
+    persist: true,
     actions: {
-        async compileCode(sourceCode) {
+        async compileCode() {
             try {
                 const response = await axios.post("http://localhost:8080/api/compile", {
-                    sourceCode: sourceCode
+                    sourceCode: this.sourceCode,
+                    language: this.language
                 });
 
                 this.result = response.data.result;
