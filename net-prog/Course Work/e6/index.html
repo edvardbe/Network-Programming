@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        canvas { border: 1px solid black; cursor: crosshair; }
+        #messages { width: 300px; height: 150px; overflow-y: auto; border: 1px solid #ccc; margin: 10px auto; padding: 5px; }
+    </style>
+</head>
+<body>
+    <h2>WebSocket Test</h2>
+    <input id="messageInput" type="text" placeholder="Type a message..." />
+    <button onclick="sendMessage()">Send</button>
+    <div id="messages"></div>
+    
+    <h3>Drawing Board</h3>
+    <canvas id="canvas" width="400" height="300"></canvas>
+
+    <script>
+        const ws = new WebSocket('ws://localhost:3001');
+        const messagesDiv = document.getElementById('messages');
+        const messageInput = document.getElementById('messageInput');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let drawing = false;
+        
+        ws.onmessage = event => {
+            try {
+                const data = JSON.parse(event.data);
+                if (data.type === "message") {
+                    messagesDiv.innerHTML += `<p>${data.text}</p>`;
+                } else if (data.type === "draw") {
+                    drawPoint(data.x, data.y);
+                }
+            } catch (e) {
+                console.error("Invalid message:", event.data);
+            }
+        };
+
+        function sendMessage() {
+            const text = messageInput.value.trim();
+            if (text) {
+                ws.send(JSON.stringify({ type: "message", text }));
+                messageInput.value = "";
+            }
+        }
+
+        canvas.addEventListener("mousedown", () => drawing = true);
+        canvas.addEventListener("mouseup", () => drawing = false);
+        canvas.addEventListener("mousemove", event => {
+            if (!drawing) return;
+            const rect = canvas.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            drawPoint(x, y);
+            ws.send(JSON.stringify({ type: "draw", x, y }));
+        });
+
+        function drawPoint(x, y) {
+            ctx.fillStyle = "black";
+            ctx.beginPath();
+            ctx.arc(x, y, 3, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    </script>
+</body>
+</html>
